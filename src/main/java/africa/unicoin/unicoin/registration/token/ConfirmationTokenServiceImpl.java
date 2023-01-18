@@ -1,12 +1,11 @@
 package africa.unicoin.unicoin.registration.token;
 
+import africa.unicoin.unicoin.exception.RegistrationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-
 import java.time.LocalDateTime;
-import java.util.Optional;
 
 
 @EnableScheduling
@@ -39,7 +38,7 @@ public class ConfirmationTokenServiceImpl implements ConfirmationTokenService {
 
     @Override
     public ConfirmationToken confirmAccessToken(String confirmationToken) {
-        return tokenRepository.findByToken(confirmationToken).orElseThrow(() -> new IllegalStateException("Token Does Not Exist"));
+        return tokenRepository.findByToken(confirmationToken).orElseThrow(() -> new RegistrationException("Token Does Not Exist"));
     }
 
     @Override

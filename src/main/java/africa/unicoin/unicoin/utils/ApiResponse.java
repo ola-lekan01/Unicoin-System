@@ -16,6 +16,6 @@ public class ApiResponse {
     private ZonedDateTime timestamp;
     private boolean isSuccessful;
     private Object data;
-    private HttpStatus status;
+    private int status;
     private String path;
 }

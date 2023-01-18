@@ -1,6 +1,7 @@
 package africa.unicoin.unicoin.registration;
 
 import africa.unicoin.unicoin.email.EmailSender;
+import africa.unicoin.unicoin.exception.RegistrationException;
 import africa.unicoin.unicoin.registration.token.ConfirmationTokenService;
 import africa.unicoin.unicoin.user.User;
 import africa.unicoin.unicoin.user.UserService;
@@ -34,7 +35,7 @@ public class RegistrationServiceImpl implements RegistrationService{
         boolean foundUser =  userService
                 .findUserByEmailAddressIgnoreCase(request.getEmailAddress())
                 .isPresent();
-        if(foundUser) throw new IllegalStateException( request.getEmailAddress() + " already Exists");
+        if(foundUser) throw new RegistrationException( request.getEmailAddress() + " already Exists");
 
         String token =  userService.createAccount(
                 new User(
@@ -51,7 +52,7 @@ public class RegistrationServiceImpl implements RegistrationService{
 
     public String confirmToken(String confirmationToken){
         var token= confirmationTokenService.confirmAccessToken(confirmationToken);
-        if(token.getExpiredAt().isBefore(LocalDateTime.now())) throw new IllegalStateException("Token has Expired");
+        if(token.getExpiredAt().isBefore(LocalDateTime.now())) throw new RegistrationException("Token has Expired");
         confirmationTokenService.setConfirmedAt(token.getToken());
         return "Confirmed";
     }

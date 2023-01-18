@@ -9,17 +9,21 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.time.ZonedDateTime;
 
+
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
     @ExceptionHandler
-    public ResponseEntity<?> userAlreadyExistException(RegistrationException registrationException, HttpServletRequest httpServletRequest){
-        return ApiResponse.builder()
+    public ResponseEntity<?> userAlreadyExistException(RegistrationException registrationException,
+                                                       HttpServletRequest httpServletRequest){
+        ApiResponse apiResponse =  ApiResponse.builder()
                 .timestamp(ZonedDateTime.now())
-                .status(HttpStatus.BAD_REQUEST)
+                .status(HttpStatus.BAD_REQUEST.value())
                 .isSuccessful(false)
                 .path(httpServletRequest.getRequestURI())
-                .data()
+                .data(registrationException.getMessage())
                 .build();
+
+        return new ResponseEntity<>(apiResponse, HttpStatus.CONFLICT);
     }
 }
