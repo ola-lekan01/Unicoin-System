@@ -2,6 +2,8 @@ package africa.unicoin.unicoin.registration;
 
 import africa.unicoin.unicoin.email.EmailSender;
 import africa.unicoin.unicoin.exception.RegistrationException;
+import africa.unicoin.unicoin.registration.dtos.ConfirmationTokenRequest;
+import africa.unicoin.unicoin.registration.dtos.RegistrationRequest;
 import africa.unicoin.unicoin.registration.token.ConfirmationTokenService;
 import africa.unicoin.unicoin.user.User;
 import africa.unicoin.unicoin.user.UserService;
@@ -15,20 +17,18 @@ import static africa.unicoin.unicoin.user.UserRole.USER;
 
 @Service
 public class RegistrationServiceImpl implements RegistrationService{
-
     private final UserService userService;
     private final EmailSender emailSender;
     private final ConfirmationTokenService confirmationTokenService;
 
     @Autowired
-    public RegistrationServiceImpl(UserService userService, EmailSender emailSender, ConfirmationTokenService confirmationTokenService) {
+    public RegistrationServiceImpl(UserService userService,
+                                   EmailSender emailSender,
+                                   ConfirmationTokenService confirmationTokenService) {
         this.userService = userService;
         this.emailSender = emailSender;
         this.confirmationTokenService = confirmationTokenService;
     }
-
-
-
 
     @Override
     public String register(RegistrationRequest request) throws MessagingException {
@@ -50,12 +50,18 @@ public class RegistrationServiceImpl implements RegistrationService{
         return token;
     }
 
-    public String confirmToken(String confirmationToken){
-        var token= confirmationTokenService.confirmAccessToken(confirmationToken);
+    public String confirmToken(ConfirmationTokenRequest requestToken) {
+        var token= confirmationTokenService.confirmAccessToken(requestToken.getToken());
         if(token.getExpiredAt().isBefore(LocalDateTime.now())) throw new RegistrationException("Token has Expired");
         confirmationTokenService.setConfirmedAt(token.getToken());
         return "Confirmed";
     }
+
+    @Override
+    public void enableUser(ConfirmationTokenRequest confirmationTokenRequest) {
+        userService.enableUser(confirmationTokenRequest.getEmail());
+    }
+
 
     private String buildEmail(String name, String link) {
         return "<div style=\"font-family:Helvetica,Arial,sans-serif;font-size:16px;margin:0;color:#0b0c0c\">\n" +
@@ -125,6 +131,4 @@ public class RegistrationServiceImpl implements RegistrationService{
                 "\n" +
                 "</div></div>";
     }
-
-
 }

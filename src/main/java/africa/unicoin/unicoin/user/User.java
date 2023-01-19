@@ -17,7 +17,7 @@ public class User {
     private String firstName;
     private String lastName;
     private String password;
-    private Boolean disabled;
+    private Boolean disabled = true;
     @Enumerated(EnumType.STRING)
     private UserRole userRole;
 
@@ -28,5 +28,13 @@ public class User {
         this.lastName = lastName;
         this.password = password;
         this.userRole = userRole;
+    }
+
+    public Boolean isDisabled() {
+        return disabled;
+    }
+
+    public void isDisabled(Boolean disabled) {
+        this.disabled = disabled;
     }
 }

@@ -1,5 +1,7 @@
 package africa.unicoin.unicoin.registration;
 
+import africa.unicoin.unicoin.registration.dtos.ConfirmationTokenRequest;
+import africa.unicoin.unicoin.registration.dtos.RegistrationRequest;
 import africa.unicoin.unicoin.utils.ApiResponse;
 import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -39,5 +41,22 @@ public class RegistrationController {
                 build();
 
         return new ResponseEntity<>(response, HttpStatus.CREATED);
+    }
+
+    public ResponseEntity<?> confirmToken (@RequestBody ConfirmationTokenRequest confirmationTokenRequest,
+                                           HttpServletRequest httpServletRequest){
+
+        var confirmedToken = registrationService.confirmToken(confirmationTokenRequest);
+        registrationService.enableUser(confirmationTokenRequest);
+
+        ApiResponse response = ApiResponse.builder().
+                status(HttpStatus.OK.value())
+                .isSuccessful(true)
+                .timestamp(ZonedDateTime.now())
+                .path(httpServletRequest.getRequestURI())
+                .data(confirmedToken).build();
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
+
     }
 }

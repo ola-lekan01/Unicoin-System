@@ -2,6 +2,7 @@ package africa.unicoin.unicoin.user;
 
 import africa.unicoin.unicoin.registration.token.ConfirmationToken;
 import africa.unicoin.unicoin.registration.token.ConfirmationTokenService;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -40,5 +41,10 @@ public class UserServiceImpl implements UserService{
     @Override
     public Optional<User> findUserByEmailAddressIgnoreCase(String emailAddress) {
         return userRepository.findByEmailAddressIgnoreCase(emailAddress);
+    }
+
+    @Override
+    public void enableUser(String email) {
+        userRepository.setIsDisabledToFalse(email);
     }
 }
