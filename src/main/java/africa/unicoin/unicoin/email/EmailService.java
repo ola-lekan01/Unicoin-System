@@ -11,16 +11,11 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import java.lang.invoke.StringConcatFactory;
-
 @Slf4j
 @Service
 public class EmailService implements EmailSender {
 
     private final JavaMailSender mailSender;
-    private String sendTo;
-    private String sentFrom;
-
     @Autowired
     public EmailService(JavaMailSender mailSender) {
         this.mailSender = mailSender;
@@ -42,18 +37,14 @@ public class EmailService implements EmailSender {
         } catch (MessagingException e) {
             log.info("problem1: ");
             log.info(e.getMessage());
-            sendTo = to;
-            sentFrom = email;
         } catch (MailException e) {
             log.info("problem2: ");
             log.info(e.getMessage());
-            sendTo = to;
-            sentFrom = email;
         }
     }
 
-    @Scheduled(cron = "* * * * *")
-    public void resendMessage() throws MessagingException {
-        send(sendTo, sentFrom);
-    }
+//    @Scheduled(cron = "* * * * *")
+//    public void resendMessage() throws MessagingException {
+//        send(sendTo, sentFrom);
+//    }
 }
