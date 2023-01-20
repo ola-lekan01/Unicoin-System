@@ -56,6 +56,10 @@ public class UserServiceImpl implements UserService{
     public String changePassword(PasswordResetRequest passwordReset) {
         var foundUser = findUserByEmailAddressIgnoreCase(passwordReset.getEmail())
                 .orElseThrow(() -> new UserException(passwordReset.getEmail() + " does not exist"));
+        System.out.println(foundUser.getPassword());
+        System.out.println(passwordReset.getEmail());
+        System.out.println(passwordReset.getOldPassword());
+        System.out.println(passwordReset.getNewPassword());
         if(!Objects.equals(foundUser.getPassword(), passwordReset.getOldPassword())) throw new UserException("Password Mismatch");
         userRepository.setPassword(passwordReset.getEmail(), passwordReset.getNewPassword());
         return "Password Reset Successful";
