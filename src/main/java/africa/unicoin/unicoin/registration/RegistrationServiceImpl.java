@@ -2,9 +2,9 @@ package africa.unicoin.unicoin.registration;
 
 import africa.unicoin.unicoin.email.EmailSender;
 import africa.unicoin.unicoin.exception.RegistrationException;
+import africa.unicoin.unicoin.exception.UserException;
 import africa.unicoin.unicoin.registration.dtos.ConfirmationTokenRequest;
 import africa.unicoin.unicoin.registration.dtos.RegistrationRequest;
-import africa.unicoin.unicoin.registration.dtos.ResendTokenRequest;
 import africa.unicoin.unicoin.registration.token.ConfirmationTokenService;
 import africa.unicoin.unicoin.user.User;
 import africa.unicoin.unicoin.user.UserService;
@@ -57,8 +57,10 @@ public class RegistrationServiceImpl implements RegistrationService{
 
     public String confirmToken(ConfirmationTokenRequest requestToken) {
         var token= confirmationTokenService.confirmAccessToken(requestToken.getToken());
+
         var foundUser = userService.findUserByEmailAddressIgnoreCase(requestToken.getEmail())
                 .orElseThrow( ()-> new RegistrationException(String.format("%s does not exist", requestToken.getEmail())));
+
         if(token.getUser() != foundUser) throw new RegistrationException("Token Entered does not Match.");
         if(token.getExpiredAt().isBefore(LocalDateTime.now())) throw new RegistrationException("Token has Expired");
         if(token.getConfirmedAt() != null) throw new RegistrationException("Token has been used");
@@ -75,11 +77,18 @@ public class RegistrationServiceImpl implements RegistrationService{
     public String resendToken(String email) throws MessagingException {
         var foundUser = userService.findUserByEmailAddressIgnoreCase(email)
                 .orElseThrow(()-> new RegistrationException(email + " does not exit."));
-        var token = userService.resendToken(foundUser.getEmailAddress());
+        var token = userService.generateToken(foundUser.getEmailAddress());
         emailBuilder(foundUser.getEmailAddress(), foundUser.getFirstName(), token);
         return "Token Sent";
     }
 
+    @Override
+    public String resetPassword(String email) throws MessagingException {
+        var foundUser = userService.findUserByEmailAddressIgnoreCase(email)
+                .orElseThrow(() -> new UserException(String.format("%s email does not exist", email)));
+        resendToken(foundUser.getEmailAddress());
+        return "Token sent to Email for Confirmation";
+    }
 
     private String buildEmail(String name, String link) {
         return "<div style=\"font-family:Helvetica,Arial,sans-serif;font-size:16px;margin:0;color:#0b0c0c\">\n" +

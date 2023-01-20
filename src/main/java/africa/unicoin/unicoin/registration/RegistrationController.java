@@ -3,6 +3,7 @@ package africa.unicoin.unicoin.registration;
 import africa.unicoin.unicoin.registration.dtos.ConfirmationTokenRequest;
 import africa.unicoin.unicoin.registration.dtos.RegistrationRequest;
 import africa.unicoin.unicoin.registration.dtos.ResendTokenRequest;
+import africa.unicoin.unicoin.user.dtos.PasswordResetRequest;
 import africa.unicoin.unicoin.utils.ApiResponse;
 import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -72,5 +73,19 @@ public class RegistrationController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    @PostMapping("/password/reset")
+    public ResponseEntity<?> resetPassword(@RequestBody PasswordResetRequest resetRequest, HttpServletRequest httpServletRequest) throws MessagingException {
+
+        var resetResponse = registrationService.resetPassword(resetRequest.getEmail());
+
+        ApiResponse response = ApiResponse.builder().
+                status(HttpStatus.OK.value())
+                .isSuccessful(true)
+                .timestamp(ZonedDateTime.now())
+                .path(httpServletRequest.getRequestURI())
+                .data(resetResponse).build();
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
 
 }

@@ -46,7 +46,7 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public String resendToken(String email){
+    public String generateToken(String email){
         var foundUser =  findUserByEmailAddressIgnoreCase(email)
                 .orElseThrow(()-> new RegistrationException(email + " does not exist."));
         return generateToken(saveUser(foundUser));
@@ -71,8 +71,9 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public void enableUser(String email) {
+    public boolean enableUser(String email) {
         userRepository.setIsDisabledToTrue(email);
+        return true;
     }
 
     @Override

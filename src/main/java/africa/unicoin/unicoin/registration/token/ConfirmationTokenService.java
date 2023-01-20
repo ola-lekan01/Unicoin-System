@@ -9,5 +9,5 @@ void saveConfirmationToken(ConfirmationToken confirmToken);
 void getConfirmationToken(String confirmToken);
 void deleteExpiredConfirmationToken();
 ConfirmationToken confirmAccessToken(String confirmationToken);
-void setConfirmedAt(String token);
+boolean setConfirmedAt(String token);
 }

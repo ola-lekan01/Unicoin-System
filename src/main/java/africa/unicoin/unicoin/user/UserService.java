@@ -8,9 +8,9 @@ import java.util.Optional;
 public interface UserService {
     public String createAccount(User user);
     Optional<User> findUserByEmailAddressIgnoreCase(String emailAddress);
-    void enableUser(String email);
+    boolean enableUser(String email);
     User saveUser(User foundUser);
     String login(LoginRequest loginRequest);
-    String resendToken(String email);
+    String generateToken(String email);
     String changePassword(PasswordResetRequest passwordReset);
 }
